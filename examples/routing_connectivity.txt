@@ -1,0 +1,17 @@
+# Example routing connectivity file for basin IDs
+# Format: upstream_basin_id, downstream_basin_id, [optional_weight]
+# Lines starting with # are comments
+
+# Simple routing network
+01013500,01014000,1.0
+01014000,01015800,1.0
+01016000,01015800,0.7
+01017000,01015800,0.3
+
+# Alternative format (space separated)
+01018000 01019000 1.0
+01019000 01020500 1.0
+
+# You can also omit weights (defaults to 1.0)
+01021000,01022500
+01022500,01023000

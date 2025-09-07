@@ -4,6 +4,8 @@ import torch.nn as nn
 
 from neuralhydrology.modelzoo.arlstm import ARLSTM
 from neuralhydrology.modelzoo.cudalstm import CudaLSTM
+from neuralhydrology.modelzoo.routinglstm import RoutingLSTM
+from neuralhydrology.modelzoo.routing import RoutingModule
 from neuralhydrology.modelzoo.mamba import Mamba
 from neuralhydrology.modelzoo.customlstm import CustomLSTM
 from neuralhydrology.modelzoo.ealstm import EALSTM
@@ -22,25 +24,50 @@ from neuralhydrology.utils.config import Config
 
 SINGLE_FREQ_MODELS = [
     "cudalstm",
-    "ealstm", 
-    "customlstm", 
-    "embcudalstm", 
-    "gru", 
+    "ealstm",
+    "customlstm",
+    "embcudalstm",
+    "gru",
     "transformer",
     "mamba",
-    "mclstm", 
+    "mclstm",
     "arlstm",
+    "routinglstm",
     "handoff_forecast_lstm",
     "sequential_forecast_lstm",
     "multihead_forecast_lstm",
-    "stacked_forecast_lstm"
+    "stacked_forecast_lstm",
 ]
-AUTOREGRESSIVE_MODELS = ['arlstm']
+from neuralhydrology.modelzoo.mtslstm import MTSLSTM
+from neuralhydrology.modelzoo.multihead_forecast_lstm import MultiHeadForecastLSTM
+from neuralhydrology.modelzoo.odelstm import ODELSTM
+from neuralhydrology.modelzoo.sequential_forecast_lstm import SequentialForecastLSTM
+from neuralhydrology.modelzoo.stacked_forecast_lstm import StackedForecastLSTM
+from neuralhydrology.modelzoo.transformer import Transformer
+from neuralhydrology.utils.config import Config
+
+SINGLE_FREQ_MODELS = [
+    "cudalstm",
+    "ealstm",
+    "customlstm",
+    "embcudalstm",
+    "gru",
+    "transformer",
+    "mamba",
+    "mclstm",
+    "arlstm",
+    "distributedlstm",
+    "handoff_forecast_lstm",
+    "sequential_forecast_lstm",
+    "multihead_forecast_lstm",
+    "stacked_forecast_lstm",
+]
+AUTOREGRESSIVE_MODELS = ["arlstm"]
 
 
 def get_model(cfg: Config) -> nn.Module:
     """Get model object, depending on the run configuration.
-    
+
     Parameters
     ----------
     cfg : Config
@@ -71,7 +98,8 @@ def get_model(cfg: Config) -> nn.Module:
     elif cfg.model.lower() == "lstm":
         warnings.warn(
             "The `LSTM` class has been renamed to `CustomLSTM`. Support for `LSTM` will we dropped in the future.",
-            FutureWarning)
+            FutureWarning,
+        )
         model = CustomLSTM(cfg=cfg)
     elif cfg.model.lower() == "gru":
         model = GRU(cfg=cfg)
@@ -95,9 +123,13 @@ def get_model(cfg: Config) -> nn.Module:
         model = SequentialForecastLSTM(cfg=cfg)
     elif cfg.model.lower() == "stacked_forecast_lstm":
         model = StackedForecastLSTM(cfg=cfg)
+    elif cfg.model.lower() == "routinglstm":
+        model = RoutingLSTM(cfg=cfg)
     elif cfg.model.lower() == "hybrid_model":
         model = HybridModel(cfg=cfg)
     else:
-        raise NotImplementedError(f"{cfg.model} not implemented or not linked in `get_model()`")
+        raise NotImplementedError(
+            f"{cfg.model} not implemented or not linked in `get_model()`"
+        )
 
     return model
